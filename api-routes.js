@@ -12,24 +12,26 @@ const getCollection = async (dbName, collectionName) => {
 
 router.get('/', async (request, response) => {
     const collection = await getCollection('todo-api', 'todos')
-    const todos = await collection.find().toArray()
-	response.json(todos)
+	const todos = await collection.find().toArray()
+	const todoId = todos.map((todo) => { return { ...todo, id: todo._id }; })
+	response.json(todoId)
 })
 
 router.post('/', async (request, response) => {
-	const { item, complete } = request.body
+	const { item } = request.body
+    const complete = false
 	const collection = await getCollection('todo-api', 'todos')
 	const result = await collection.insertOne({ item, complete })
-    response.json(result)
+    response.json({ result })
 })
 
 router.put('/:id', async (request, response) => {
 	const { id } = request.params
-    const collection = await getCollection('todo-api', 'todos')
+	const collection = await getCollection('todo-api', 'todos')
 	const todo = await collection.findOne({ _id: new ObjectId(id) })
-    const complete = !todo.complete
-    const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: { complete } })
-	response.json(result)
+	const complete = !todo.complete
+	const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: { complete } })
+	response.json({ result })
 })
 
 module.exports = router

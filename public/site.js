@@ -48,6 +48,7 @@
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ item: input.value })
 		})
+		console.log(response)
 
 		input.value = ''
 		displayTodos(await getTodos())
